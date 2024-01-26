@@ -1,11 +1,9 @@
 import { AssignmentStatement, Expression, NumericLiteral, TableConstructorExpression, TableKey, TableKeyString, TableValue, parse } from 'luaparse';
-import { log } from 'console';
 
 export interface Item {
     id: number
     name: string
     description: string
-    slots: number
 }
 
 export function parseItems(itemInfo: string): Item[] {
@@ -20,13 +18,25 @@ export function parseItems(itemInfo: string): Item[] {
         let item: Item = {
             id: key.value,
             name: extractStr(fields[3]),
-            description: extractStr(fields[5]),
-            slots: Number(extractStr(fields[6])) || 0
+            description: extractStr(fields[5])
         }
+
+        if (item.description === "ITEM DUMMIED OUT" 
+            || item.description === "..."
+            || item.description === ",.."
+            || item.name.includes("unused") 
+            || item.name.includes("unsused")) {
+            continue
+        }
+
+        let slots: string = extractStr(fields[6])
+        if (slots !== "0") {
+            item.name = item.name.concat(' [' + slots + ']')
+        }
+
         items.push(item)
         
     }
-    log(info)
     return items
 }
 
@@ -35,6 +45,9 @@ function extractStr(field: TableKey|TableKeyString|TableValue|Expression): strin
         case "NumericLiteral":
         case "StringLiteral":
             return field.raw
+                .replace(/"/g, '') // Replace quotes
+                .replace(/\^FFFFFF/g, '\n') // Replace LUA newline with regular newline
+                .replace(/\^\w{6}/g, '') // Replace LUA meta tags
 
         case "TableKey":
         case "TableKeyString":
@@ -46,7 +59,7 @@ function extractStr(field: TableKey|TableKeyString|TableValue|Expression): strin
             for (let entry of field.fields) {
                 blocks.push(extractStr(entry))
             }
-            return blocks.join("<br>")
+            return blocks.join('\n')
 
         default:
             return ''

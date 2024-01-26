@@ -4,12 +4,23 @@
     "src/"
   ],
   "scripts": {
-    "start": "parcel serve src/index.html",
-    "build": "cross-env NODE_ENV=production parcel build src/index.html --public-url .",
+    "start": "parcel serve public/index.html",
+    "build": "cross-env NODE_ENV=production parcel build public/index.html --public-url .",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/inter": "^5.0.16",
+    "@mui/icons-material": "^5.15.6",
+    "@mui/joy": "^5.0.0-beta.24",
+    "@mui/system": "^5.15.6",
+    "@mui/x-data-grid": "^6.19.1",
+    "@types/js-search": "^1.4.4",
+    "js-search": "^2.0.1",
     "luaparse": "^0.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "tslog": "^4.9.2"
   },
   "devDependencies": {
