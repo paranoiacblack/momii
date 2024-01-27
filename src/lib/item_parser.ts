@@ -1,10 +1,31 @@
-import { AssignmentStatement, Expression, NumericLiteral, TableConstructorExpression, TableKey, TableKeyString, TableValue, parse } from 'luaparse';
+import { 
+    AssignmentStatement,
+    Expression,
+    NumericLiteral, 
+    TableConstructorExpression,
+    TableKey,
+    TableKeyString,
+    TableValue,
+    parse
+} from 'luaparse';
 
 export interface Item {
     id: number
     name: string
     description: string
+    type: string
+    subType: string
+    weight: string
 }
+
+export var itemTypes: Set<string> = new Set()
+
+const classRe = /Class: (\w+)/
+const compoundRe = /Compounds on: (\w+)/
+const atkRe = /Attack: (\w+)/
+const armorRe = /Armor Type: (\w+)/
+const weightRe = /Weight: (\w+)/
+const positionRe = /Position: (\w+)/
 
 export function parseItems(itemInfo: string): Item[] {
     const info = parse(itemInfo)
@@ -18,16 +39,50 @@ export function parseItems(itemInfo: string): Item[] {
         let item: Item = {
             id: key.value,
             name: extractStr(fields[3]),
-            description: extractStr(fields[5])
+            description: extractStr(fields[5]),
+            type: '',
+            subType: '',
+            weight: ''
         }
 
-        if (item.description === "ITEM DUMMIED OUT" 
+        if (item.description === "ITEM DUMMIED OUT"
             || item.description === "..."
             || item.description === ",.."
-            || item.name.includes("unused") 
+            || item.name.includes("unused")
             || item.name.includes("unsused")) {
             continue
         }
+
+        let weightMatch = weightRe.exec(item.description)
+        if (weightMatch) {
+            item.weight = weightMatch[1]
+        }
+
+        let compoundMatch = compoundRe.exec(item.description)
+        let classMatch = classRe.exec(item.description)
+        if (compoundMatch) {
+            item.type = "Card"
+            item.subType = compoundMatch[1]
+        } else if (classMatch) {
+            let armorMatch = armorRe.exec(item.description)
+            if (atkRe.exec(item.description)) {
+                item.type = "Weapon"
+                item.subType = classMatch[1]
+            } else if (armorMatch) {
+                item.type = classMatch[1]
+                item.subType = armorMatch[1]
+            } else {
+                item.type = classMatch[1]
+            }
+
+            let positionMatch = positionRe.exec(item.description)
+            if (positionMatch) {
+                item.type += "(" + positionMatch[0] + ")"
+            }
+        } else {
+            item.type = "Etc"
+        }
+        itemTypes.add(item.type)
 
         let slots: string = extractStr(fields[6])
         if (slots !== "0") {
@@ -35,13 +90,13 @@ export function parseItems(itemInfo: string): Item[] {
         }
 
         items.push(item)
-        
+
     }
     return items
 }
 
-function extractStr(field: TableKey|TableKeyString|TableValue|Expression): string {
-    switch(field.type) {
+function extractStr(field: TableKey | TableKeyString | TableValue | Expression): string {
+    switch (field.type) {
         case "NumericLiteral":
         case "StringLiteral":
             return field.raw

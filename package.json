@@ -14,9 +14,8 @@
     "@fontsource/inter": "^5.0.16",
     "@mui/icons-material": "^5.15.6",
     "@mui/joy": "^5.0.0-beta.24",
+    "@mui/material": "^5.15.6",
     "@mui/system": "^5.15.6",
-    "@mui/x-data-grid": "^6.19.1",
-    "@types/js-search": "^1.4.4",
     "js-search": "^2.0.1",
     "luaparse": "^0.3.1",
     "react": "^18.2.0",
@@ -24,16 +23,16 @@
     "tslog": "^4.9.2"
   },
   "devDependencies": {
+    "@parcel/resolver-glob": "^2.11.0",
     "@parcel/transformer-inline-string": "^2.11.0",
+    "@types/js-search": "^1.4.4",
     "@types/luaparse": "^0.2.12",
     "@types/parcel-bundler": "1.12.8",
-    "assert": "^2.1.0",
-    "console-browserify": "^1.2.0",
+    "@types/react-dom": "^18.2.18",
     "cross-env": "7.0.3",
     "gh-pages": "6.1.1",
     "parcel": "2.11.0",
     "process": "^0.11.10",
-    "typescript": "5.3.3",
-    "util": "^0.12.5"
+    "typescript": "5.3.3"
   }
 }

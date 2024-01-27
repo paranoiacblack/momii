@@ -2,11 +2,11 @@ import iteminfo from 'bundle-text:../static/iteminfo.lua';
 import {Item, parseItems} from './lib/item_parser';
 import { ExactWordIndexStrategy, Search } from 'js-search';
 import ItemTable from './components/ItemTable';
-import { CssVarsProvider } from '@mui/joy';
-import Sheet from '@mui/joy/Sheet';
+import { Box, CssBaseline, CssVarsProvider } from '@mui/joy';
 import React = require('react');
 import { useColorScheme } from '@mui/joy';
 import Button from '@mui/joy/Button';
+import { DarkModeRounded, LightMode } from '@mui/icons-material';
 
 const customItems: Item[] = parseItems(iteminfo)
 var search = new Search('id')
@@ -35,7 +35,7 @@ function ModeToggle() {
           setMode(mode === 'light' ? 'dark' : 'light');
         }}
       >
-        {mode === 'light' ? 'Turn dark' : 'Turn light'}
+        {mode === 'light' ? <DarkModeRounded /> : <LightMode /> }
       </Button>
     );
 }   
@@ -43,23 +43,31 @@ function ModeToggle() {
 export default function App() {
     return (
         <CssVarsProvider>
-            <ModeToggle />
-            <Sheet
-                sx={{
-                    width: '50%',
-                    mx: 'auto', // margin left & right
-                    my: 4, // margin top & bottom
-                    py: 3, // padding top & bottom
-                    px: 2, // padding left & right
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 2,
-                    borderRadius: 'sm',
-                    boxShadow: 'md',
-                    }}                   
-                variant="outlined">
-                <ItemTable items={customItems} />
-            </Sheet>
+          <CssBaseline />
+          <ModeToggle />
+          <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
+            <Box
+              component="main"
+              className="MainContent"
+              sx={{
+                px: { xs: 2, md: 6 },
+                pt: {
+                  xs: 'calc(12px + var(--Header-height))',
+                  sm: 'calc(12px + var(--Header-height))',
+                  md: 3,
+                },
+                pb: { xs: 2, sm: 2, md: 3 },
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                minWidth: 0,
+                height: '100dvh',
+                gap: 1,
+              }}
+            >
+              <ItemTable items={[customItems[0]]} />
+            </Box>
+          </Box>
         </CssVarsProvider>
     );
 }
