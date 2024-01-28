@@ -2,17 +2,22 @@ import { Item, itemTypes } from '../lib/item_parser';
 import React = require('react');
 import { Table, IconButton, Input, Sheet, Box, FormControl, FormLabel, Typography, Option, Select, Button } from '@mui/joy';
 import { FilterAlt, Search } from '@mui/icons-material';
-import redPotSmall from "../../static/images/small/501.png";
-import redPotLarge from "../../static/images/large/501.png";
+import smallImages from "../../static/images/small/*.png";
+import largeImages from "../../static/images/large/*.png";
 
 interface TableProps {
-    items: Item[]
+    searchFn(query: string, type: string): Item[]
 }
 
 function ItemTable(props: TableProps) {
-    const { items } = props;
+    const { searchFn } = props;
     const sortedItemTypes = Array.from(itemTypes);
     sortedItemTypes.sort();
+
+    const [open, setOpen] = React.useState(false);
+    const [query, setQuery] = React.useState("");
+    const [type, setType] = React.useState("");
+    const [items, setItems] = React.useState(searchFn(query, type));
 
     return (
         <React.Fragment>
@@ -53,8 +58,8 @@ function ItemTable(props: TableProps) {
             }}
         >
             <FormControl sx={{ flex: 1 }} size="sm">
-                <FormLabel>Search for item by ID, Name or Description </FormLabel>
-                <Input size="sm" placeholder="Search" startDecorator={<Search />} />
+                <FormLabel>Search for item by ID, Name or Description</FormLabel>
+                <Input size="sm" placeholder="Search" startDecorator={<Search />} onChange={e => setQuery(e.target.value)} />
             </FormControl>
             <FormControl size="sm">
                 <FormLabel>Type</FormLabel>
@@ -62,12 +67,14 @@ function ItemTable(props: TableProps) {
                 size="sm"
                 placeholder="Filter by type"
                 slotProps={{ button: { sx: { whiteSpace: 'nowrap' } } }}
+                onChange={(e, value) => setType(value as string)}
+                value={type}
                 >
-                    <Option value="">All</Option>
-                    {sortedItemTypes.map((type) => <Option value={type}>{type}</Option>)}
+                    <Option key="default" value="">All</Option>
+                    {sortedItemTypes.map((type) => <Option key={type} value={type}>{type}</Option>)}
                 </Select>
             </FormControl>
-            <Button size='sm'>Search</Button>
+            <Button onClick={() => setItems(searchFn(query, type))} size='sm'>Search</Button>
         </Box>
         <Sheet
             className="ItemTableContainer"
@@ -105,7 +112,7 @@ function ItemTable(props: TableProps) {
                     </tr>
                 </thead>
                 <tbody>
-                    {items.map((item) => <ItemRow item={item}></ItemRow>)}
+                    {items.map((item) => <ItemRow key={item.id} item={item}></ItemRow>)}
                 </tbody>
             </Table>
         </Sheet>
@@ -125,7 +132,7 @@ function ItemRow(props: { item: Item }) {
                 </td>
                 <td>
                     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                        <img src={redPotSmall} />
+                        <img src={smallImages[item.id]} />
                         <Typography level="body-xs">{item.name}</Typography>
                     </Box>
                 </td>
@@ -136,7 +143,7 @@ function ItemRow(props: { item: Item }) {
                     <Typography level="body-sm">{item.weight}</Typography>
                 </td>
             </tr>
-            <tr>
+            <tr key='${item.id}-desc'>
                 <td style={{height: 0, padding: 0}} colSpan={4}>
                     {open && (
                         <Box sx={{
@@ -145,7 +152,7 @@ function ItemRow(props: { item: Item }) {
                             display: 'flex',
                             gap: 2,
                         }}>
-                            <img style={{alignSelf: 'flex-start'}} src={redPotLarge} />
+                            <img style={{alignSelf: 'flex-start'}} src={largeImages[item.id]} />
                             <div>{descriptionAsHTML(item.description)}</div>
                         </Box>
                     )}

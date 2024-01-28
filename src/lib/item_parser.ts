@@ -20,11 +20,11 @@ export interface Item {
 
 export var itemTypes: Set<string> = new Set()
 
-const classRe = /Class: (\w+)/
-const compoundRe = /Compounds on: (\w+)/
+const classRe = /Class: (.*)\n/
+const compoundRe = /Compound on: (\w+)/
 const atkRe = /Attack: (\w+)/
 const armorRe = /Armor Type: (\w+)/
-const weightRe = /Weight: (\w+)/
+const weightRe = /Weight: (.*)/
 const positionRe = /Position: (\w+)/
 
 export function parseItems(itemInfo: string): Item[] {

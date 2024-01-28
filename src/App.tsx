@@ -1,19 +1,28 @@
 import iteminfo from 'bundle-text:../static/iteminfo.lua';
 import {Item, parseItems} from './lib/item_parser';
-import { ExactWordIndexStrategy, Search } from 'js-search';
+import { Search } from 'js-search';
 import ItemTable from './components/ItemTable';
-import { Box, CssBaseline, CssVarsProvider } from '@mui/joy';
+import { Box, CssBaseline, CssVarsProvider, Typography } from '@mui/joy';
 import React = require('react');
 import { useColorScheme } from '@mui/joy';
 import Button from '@mui/joy/Button';
 import { DarkModeRounded, LightMode } from '@mui/icons-material';
+import momLogo from '../static/images/mythos_logo_50.png';
 
 const customItems: Item[] = parseItems(iteminfo)
 var search = new Search('id')
-search.indexStrategy = new ExactWordIndexStrategy()
 search.addIndex('name')
 search.addIndex('description')
 search.addDocuments(customItems)
+
+function SearchItems(query: string, type: string): Item[] {
+  let items: Item[] = search.search(query) as Item[];
+
+  if (type !== "") {
+    return items.filter((item) => item.type === type);
+  }
+  return items;
+}
 
 function ModeToggle() {
     const { mode, setMode } = useColorScheme();
@@ -65,7 +74,23 @@ export default function App() {
                 gap: 1,
               }}
             >
-              <ItemTable items={[customItems[0]]} />
+              <Box
+                sx={{
+                  display: 'flex',
+                  mb: 1,
+                  gap: 1,
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  alignItems: { xs: 'start', sm: 'center' },
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <img src={momLogo} />
+                <Typography level="h2" component="h1">
+                  Item Info with in-game descriptions
+                </Typography>
+              </Box>
+              <ItemTable searchFn={SearchItems} />
             </Box>
           </Box>
         </CssVarsProvider>
