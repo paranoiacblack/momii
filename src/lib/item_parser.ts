@@ -120,3 +120,11 @@ function extractStr(field: TableKey | TableKeyString | TableValue | Expression):
             return ''
     }
 }
+
+export function itemType(item: Item): string {
+    let type: string = item.type;
+    if (item.subType) {
+        type += " - " + item.subType;
+    }
+    return type;
+}

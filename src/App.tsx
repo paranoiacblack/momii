@@ -2,7 +2,8 @@ import iteminfo from 'bundle-text:../static/iteminfo.lua';
 import {Item, parseItems} from './lib/item_parser';
 import { Search } from 'js-search';
 import ItemTable from './components/ItemTable';
-import { Box, CssBaseline, CssVarsProvider, Typography } from '@mui/joy';
+import ItemList from './components/ItemList';
+import { Alert, Box, CssBaseline, CssVarsProvider, Typography } from '@mui/joy';
 import React = require('react');
 import { useColorScheme } from '@mui/joy';
 import Button from '@mui/joy/Button';
@@ -16,8 +17,11 @@ search.addIndex('description')
 search.addDocuments(customItems)
 
 function SearchItems(query: string, type: string): Item[] {
-  let items: Item[] = search.search(query) as Item[];
+  if (query === "" && type !== "") {
+    return customItems.filter((item) => item.type === type);
+  }
 
+  let items: Item[] = search.search(query) as Item[];
   if (type !== "") {
     return items.filter((item) => item.type === type);
   }
@@ -86,11 +90,10 @@ export default function App() {
                 }}
               >
                 <img src={momLogo} />
-                <Typography level="h2" component="h1">
-                  Item Info with in-game descriptions
-                </Typography>
+                <Alert>Item Info may be inaccurate. Please do not message MoM staff about this site.</Alert>
               </Box>
               <ItemTable searchFn={SearchItems} />
+              <ItemList searchFn={SearchItems} />
             </Box>
           </Box>
         </CssVarsProvider>

@@ -1,9 +1,9 @@
-import { Item, itemTypes } from '../lib/item_parser';
+import { Item, itemTypes, itemType } from '../lib/item_parser';
 import React = require('react');
-import { Table, IconButton, Input, Sheet, Box, FormControl, FormLabel, Typography, Option, Select, Button } from '@mui/joy';
-import { FilterAlt, Search } from '@mui/icons-material';
-import smallImages from "../../static/images/small/*.png";
-import largeImages from "../../static/images/large/*.png";
+import { Table, Input, Sheet, Box, FormControl, FormLabel, Typography, Option, Select, Button } from '@mui/joy';
+import { Search } from '@mui/icons-material';
+import descriptionAsHTML from '../lib/item_description';
+import { SmallImages, LargeImages } from '../lib/item_images';
 
 interface TableProps {
     searchFn(query: string, type: string): Item[]
@@ -14,47 +14,23 @@ function ItemTable(props: TableProps) {
     const sortedItemTypes = Array.from(itemTypes);
     sortedItemTypes.sort();
 
-    const [open, setOpen] = React.useState(false);
     const [query, setQuery] = React.useState("");
     const [type, setType] = React.useState("");
     const [items, setItems] = React.useState(searchFn(query, type));
 
     return (
         <React.Fragment>
-        <Sheet
-            className="SearchAndFilters-mobile"
-            sx={{
-            display: { xs: 'flex', sm: 'none' },
-            my: 1,
-            gap: 1,
-            }}
-        >
-            <Input
-                size="sm"
-                placeholder="Search"
-                startDecorator={<Search />}
-                sx={{ flexGrow: 1 }}
-            />
-            <IconButton
-                size="sm"
-                variant="outlined"
-                color="neutral"
-                onClick={() => setOpen(true)}
-            >
-                <FilterAlt />
-            </IconButton>
-        </Sheet>
         <Box
             className="SearchAndFilters-tabletUp"
             sx={{
-            borderRadius: 'sm',
-            py: 2,
-            display: { xs: 'none', sm: 'flex' },
-            flexWrap: 'wrap',
-            gap: 1.5,
-            '& > *': {
-                minWidth: { xs: '120px', md: '160px' },
-            },
+                borderRadius: 'sm',
+                py: 2,
+                display: { xs: 'none', sm: 'flex' },
+                flexWrap: 'wrap',
+                gap: 1.5,
+                '& > *': {
+                    minWidth: { xs: '120px', md: '160px' },
+                },
             }}
         >
             <FormControl sx={{ flex: 1 }} size="sm">
@@ -132,7 +108,7 @@ function ItemRow(props: { item: Item }) {
                 </td>
                 <td>
                     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                        <img src={smallImages[item.id]} />
+                        <img src={SmallImages[item.id]} />
                         <Typography level="body-xs">{item.name}</Typography>
                     </Box>
                 </td>
@@ -152,7 +128,7 @@ function ItemRow(props: { item: Item }) {
                             display: 'flex',
                             gap: 2,
                         }}>
-                            <img style={{alignSelf: 'flex-start'}} src={largeImages[item.id]} />
+                            <img style={{alignSelf: 'flex-start'}} src={LargeImages[item.id]} />
                             <div>{descriptionAsHTML(item.description)}</div>
                         </Box>
                     )}
@@ -160,29 +136,6 @@ function ItemRow(props: { item: Item }) {
             </tr>
         </React.Fragment>
     )
-}
-
-function itemType(item: Item): string {
-    let type: string = item.type;
-    if (item.subType) {
-        type += " - " + item.subType;
-    }
-    return type;
-}
-
-function descriptionAsHTML(description: string): React.ReactElement {
-    let children: React.ReactElement[] = [];
-    let blocks = description.split('\n');
-    for (let i = 0; i < blocks.length; i++) {
-        if (blocks[i] === "")
-            continue;
-
-        children.push(<span>{blocks[i]}</span>);
-        if (i !== blocks.length - 1) {
-            children.push(<br />);
-        }
-    }
-    return <React.Fragment>{children}</React.Fragment>;
 }
 
 export default ItemTable;
