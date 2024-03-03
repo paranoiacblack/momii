@@ -33,6 +33,11 @@ function ItemList(props: ListProps) {
                 startDecorator={<Search />}
                 sx={{ flexGrow: 1 }}
                 onChange={e => setQuery(e.target.value)}
+                onKeyUp={(e) => {
+                    if (e.key == 'Enter') {
+                        setItems(searchFn(query, type))
+                    }
+                }}
             />
             <Select
                 size="sm"

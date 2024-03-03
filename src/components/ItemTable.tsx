@@ -18,6 +18,10 @@ function ItemTable(props: TableProps) {
     const [type, setType] = React.useState("");
     const [items, setItems] = React.useState(searchFn(query, type));
 
+    function log(arg0: string) {
+        throw new Error('Function not implemented.');
+    }
+
     return (
         <React.Fragment>
         <Box
@@ -35,7 +39,13 @@ function ItemTable(props: TableProps) {
         >
             <FormControl sx={{ flex: 1 }} size="sm">
                 <FormLabel>Search for item by ID, Name or Description</FormLabel>
-                <Input size="sm" placeholder="Search" startDecorator={<Search />} onChange={e => setQuery(e.target.value)} />
+                <Input size="sm" placeholder="Search" startDecorator={<Search />}
+                    onChange={e => setQuery(e.target.value)} 
+                    onKeyUp={(e) => {
+                        if (e.key == 'Enter') {
+                            setItems(searchFn(query, type))
+                        }
+                    }}/>
             </FormControl>
             <FormControl size="sm">
                 <FormLabel>Type</FormLabel>
